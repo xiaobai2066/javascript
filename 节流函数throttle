@@ -1,0 +1,24 @@
+  定义：节流函数指某个函数在一定时间间隔内（例如5s）只执行一次，在5s过后可触发下次函数执行。
+  使用场景：适用于函数被频繁调用，例如window.resize()事件、scroll事件、touchmove事件等。
+  实现方案：
+    1. 定时器：用时间戳来判断是否已到执行时间，记录上次执行的时间戳，然后每次触发事件执行回调，回调中判断当前时间戳距离上次执行时间戳的间隔是否已经达到时间差，如果是则执行，并更新上次执行的时间戳，依次循环。
+      // fn需要执行的函数, wait时间间隔
+      const throttle = (fn, wait = 50) => {
+        // 上一次执行 fn 的时间
+        let previous = 0
+        return function(...args) {
+          // 获取当前时间，转换成时间戳，单位毫秒
+          let now = +new Date()
+          // 将当前时间和上一次执行函数的时间进行对比
+          // 大于等待时间就把 previous 设置为当前时间并执行函数fn
+          if (now - previous > wait) {
+            previous = now
+            fn.apply(this, args)
+          }
+        }
+      } 
+      // 执行throttle函数返回新函数
+      const actualFn = throttle(() => console.log('fn函数执行了'), 5000)
+      // 每10毫秒执行一次actualFn，但只有时间差大于5000时才会执行fn
+      setInterval(betterFn, 10)
+     
